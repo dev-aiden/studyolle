@@ -13,7 +13,7 @@ public class SignUpFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return false;
+        return clazz.isAssignableFrom(SignUpForm.class);
     }
 
     @Override

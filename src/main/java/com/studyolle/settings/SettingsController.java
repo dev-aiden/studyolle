@@ -20,6 +20,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -122,6 +124,8 @@ public class SettingsController {
     @GetMapping("/settings/tags")
     public String updateTagForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
+        Set<Tag> tags = accountService.getTags(account);
+        model.addAttribute("tags", tags.stream().map(Tag::getTitle).collect(Collectors.toList()));
         return "settings/tags";
     }
 
@@ -132,12 +136,5 @@ public class SettingsController {
         Tag tag = tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(Tag.builder().title(tagForm.getTagTitle()).build()));
         accountService.addTag(account, tag);
         return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/settings/tags")
-    public String updateTag() {
-
-
-        return "redirect:/settings/tags";
     }
 }

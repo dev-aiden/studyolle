@@ -141,7 +141,12 @@ public class SettingsController {
     @ResponseBody
     public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
-        Tag tag = tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(Tag.builder().title(title).build()));
+
+        Tag tag = tagRepository.findByTitle(title);
+        if (tag == null) {
+            tag = tagRepository.save(Tag.builder().title(tagForm.getTagTitle()).build());
+        }
+
         accountService.addTag(account, tag);
         return ResponseEntity.ok().build();
     }
@@ -150,11 +155,12 @@ public class SettingsController {
     @ResponseBody
     public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
-        Optional<Tag> optionalTag = tagRepository.findByTitle(title);
-        if(optionalTag.isEmpty()) {
+        Tag tag = tagRepository.findByTitle(title);
+        if (tag == null) {
             return ResponseEntity.badRequest().build();
         }
-        accountService.removeTag(account, optionalTag.get());
+
+        accountService.removeTag(account, tag);
         return ResponseEntity.ok().build();
     }
 }

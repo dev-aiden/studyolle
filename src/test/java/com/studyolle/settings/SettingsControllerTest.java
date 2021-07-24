@@ -6,8 +6,11 @@ import com.studyolle.account.AccountService;
 import com.studyolle.account.form.SignUpForm;
 import com.studyolle.domain.Account;
 import com.studyolle.domain.Tag;
+import com.studyolle.domain.Zone;
 import com.studyolle.settings.form.TagForm;
+import com.studyolle.settings.form.ZoneForm;
 import com.studyolle.tag.TagRepository;
+import com.studyolle.zone.ZoneRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,6 +55,11 @@ class SettingsControllerTest {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    ZoneRepository zoneRepository;
+
+    private Zone testZone = Zone.builder().city("test").localNameOfCity("테스트시").province("테스트주").build();
+
     @BeforeEach
     void beforeEach() {
         SignUpForm signUpForm = new SignUpForm();
@@ -59,11 +67,14 @@ class SettingsControllerTest {
         signUpForm.setEmail("test@email.com");
         signUpForm.setPassword("12345678");
         accountService.processNewAccount(signUpForm);
+
+        zoneRepository.save(testZone);
     }
 
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
+        zoneRepository.deleteAll();
     }
 
     @WithUserDetails(value = "aiden", setupBefore = TestExecutionEvent.TEST_EXECUTION)
@@ -220,9 +231,10 @@ class SettingsControllerTest {
         tagForm.setTagTitle("newTag");
 
         mockMvc.perform(post("/settings/tags/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tagForm))
-                .with(csrf()))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(tagForm))
+                    .with(csrf()))
+                .andDo(print())
                 .andExpect(status().isOk());
 
         Tag newTag = tagRepository.findByTitle("newTag");
@@ -245,11 +257,64 @@ class SettingsControllerTest {
         tagForm.setTagTitle("newTag");
 
         mockMvc.perform(post("/settings/tags/remove")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tagForm))
-                .with(csrf()))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(tagForm))
+                    .with(csrf()))
+                .andDo(print())
                 .andExpect(status().isOk());
 
         assertFalse(aiden.getTags().contains(newTag));
+    }
+
+    @WithUserDetails(value = "aiden", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("계정의 지역 정보 수정 폼")
+    @Test
+    void updateZonesForm() throws Exception {
+        mockMvc.perform(get("/settings/zones"))
+                .andDo(print())
+                .andExpect(view().name("settings/zones"))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("whitelist"))
+                .andExpect(model().attributeExists("zones"));
+    }
+
+    @WithUserDetails(value = "aiden", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("계정의 지역 정보 추가")
+    @Test
+    void addZone() throws Exception {
+        ZoneForm zoneForm = new ZoneForm();
+        zoneForm.setZoneName(testZone.toString());
+
+        mockMvc.perform(post("/settings/zones/add")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(zoneForm))
+                    .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        Account aiden = accountRepository.findByNickname("aiden");
+        Zone zone = zoneRepository.findByCityAndProvince(testZone.getCity(), testZone.getProvince());
+        assertTrue(aiden.getZones().contains(zone));
+    }
+
+    @WithUserDetails(value = "aiden", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("계정의 지역 정보 삭제")
+    @Test
+    void removeZone() throws Exception {
+        Account aiden = accountRepository.findByNickname("aiden");
+        Zone zone = zoneRepository.findByCityAndProvince(testZone.getCity(), testZone.getProvince());
+        accountService.addZone(aiden, zone);
+
+        ZoneForm zoneForm = new ZoneForm();
+        zoneForm.setZoneName(testZone.toString());
+
+        mockMvc.perform(post("/settings/zones/remove")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(zoneForm))
+                    .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        assertFalse(aiden.getZones().contains(zone));
     }
 }

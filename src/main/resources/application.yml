@@ -33,3 +33,12 @@ spring:
     url: jdbc:mysql://localhost:3306/studyolle
     username: root
     password: 1234
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

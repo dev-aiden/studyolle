@@ -17,6 +17,8 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+app:
+  host: http://localhost:8080
 
 ---
 spring:
@@ -54,3 +56,5 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+app:
+  host: http://localhost:8080

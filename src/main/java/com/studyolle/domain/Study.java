@@ -87,7 +87,7 @@ public class Study {
     }
 
     public String getImage() {
-        return image != null ? image : "/images/default_banner.jpg";
+        return image != null ? image : "/images/default_banner.png";
     }
 
     @Override

@@ -86,6 +86,10 @@ public class Study {
         this.members.add(account);
     }
 
+    public String getImage() {
+        return image != null ? image : "/images/default_banner.jpg";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

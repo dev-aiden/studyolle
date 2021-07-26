@@ -5,8 +5,6 @@ import com.studyolle.account.AccountService;
 import com.studyolle.account.form.SignUpForm;
 import com.studyolle.domain.Account;
 import com.studyolle.domain.Study;
-import com.studyolle.domain.Zone;
-import com.studyolle.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

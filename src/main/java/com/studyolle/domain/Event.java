@@ -91,6 +91,10 @@ public class Event {
         return false;
     }
 
+    public long getNumberOfAcceptedEnrollments() {
+        return this.enrollments.stream().filter(Enrollment::isAccepted).count();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

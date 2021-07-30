@@ -8,6 +8,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 logging:
   level:
     org:
@@ -31,6 +35,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
   datasource:
     url: jdbc:mysql://localhost:3306/studyolle
     username: root

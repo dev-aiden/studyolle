@@ -1,20 +1,18 @@
 package com.studyolle.modules.study;
 
+import com.studyolle.infra.MockMvcTest;
+import com.studyolle.modules.account.Account;
+import com.studyolle.modules.account.AccountFactory;
 import com.studyolle.modules.account.AccountRepository;
 import com.studyolle.modules.account.AccountService;
 import com.studyolle.modules.account.form.SignUpForm;
-import com.studyolle.modules.account.Account;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -22,26 +20,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
-@RequiredArgsConstructor
+@MockMvcTest
 public class StudyControllerTest {
 
-    @Autowired
-    protected MockMvc mockMvc;
-
-    @Autowired
-    protected StudyService studyService;
-
-    @Autowired
-    protected StudyRepository studyRepository;
-
-    @Autowired
-    protected AccountRepository accountRepository;
-
-    @Autowired
-    protected AccountService accountService;
+    @Autowired MockMvc mockMvc;
+    @Autowired StudyService studyService;
+    @Autowired StudyRepository studyRepository;
+    @Autowired AccountRepository accountRepository;
+    @Autowired AccountFactory accountFactory;
+    @Autowired StudyFactory studyFactory;
+    @Autowired AccountService accountService;
 
     @BeforeEach
     void beforeEach() {
@@ -125,9 +113,8 @@ public class StudyControllerTest {
     @WithUserDetails(value = "aiden", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("스터디 가입")
     void joinStudy() throws Exception {
-        Account jeong = createAccount("jeong");
-
-        Study study = createStudy("test-study", jeong);
+        Account jeong = accountFactory.createAccount("jeong");
+        Study study = studyFactory.createStudy("test-study", jeong);
 
         mockMvc.perform(get("/study/" + study.getPath() + "/join"))
                 .andExpect(status().is3xxRedirection())
@@ -141,8 +128,8 @@ public class StudyControllerTest {
     @WithUserDetails(value = "aiden", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("스터디 탈퇴")
     void leaveStudy() throws Exception {
-        Account jeong = createAccount("jeong");
-        Study study = createStudy("test-study", jeong);
+        Account jeong = accountFactory.createAccount("jeong");
+        Study study = studyFactory.createStudy("test-study", jeong);
 
         Account aiden = accountRepository.findByNickname("aiden");
         studyService.addMember(study, aiden);
@@ -152,20 +139,5 @@ public class StudyControllerTest {
                 .andExpect(redirectedUrl("/study/" + study.getPath() + "/members"));
 
         assertFalse(study.getMembers().contains(aiden));
-    }
-
-    protected Study createStudy(String path, Account manager) {
-        Study study = new Study();
-        study.setPath(path);
-        studyService.createNewStudy(study, manager);
-        return study;
-    }
-
-    protected Account createAccount(String nickname) {
-        Account jeong = new Account();
-        jeong.setNickname(nickname);
-        jeong.setEmail(nickname + "@email.com");
-        accountRepository.save(jeong);
-        return jeong;
     }
 }

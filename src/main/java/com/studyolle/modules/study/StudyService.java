@@ -92,7 +92,7 @@ public class StudyService {
     }
 
     private void checkIfManager(Account account, Study study) {
-        if (!study.isManagedBy(study)) {
+        if (!study.isManagedBy(account)) {
             throw new AccessDeniedException("해당 기능을 사용할 수 없습니다.");
         }
     }

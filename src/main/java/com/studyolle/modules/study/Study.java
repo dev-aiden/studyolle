@@ -157,8 +157,8 @@ public class Study {
         return URLEncoder.encode(this.path, StandardCharsets.UTF_8);
     }
 
-    public boolean isManagedBy(Study study) {
-        return this.getManagers().contains(this);
+    public boolean isManagedBy(Account account) {
+        return this.getManagers().contains(account);
     }
 
     @Override

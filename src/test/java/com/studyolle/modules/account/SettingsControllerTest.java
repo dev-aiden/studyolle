@@ -1,6 +1,7 @@
 package com.studyolle.modules.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.studyolle.infra.AbstractContainerBaseTest;
 import com.studyolle.infra.MockMvcTest;
 import com.studyolle.modules.account.form.SignUpForm;
 import com.studyolle.modules.tag.Tag;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @MockMvcTest
-class SettingsControllerTest {
+class SettingsControllerTest extends AbstractContainerBaseTest {
 
     @Autowired
     private MockMvc mockMvc;

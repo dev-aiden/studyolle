@@ -53,9 +53,9 @@ public class StudyEventListener {
     private void saveStudyCreatedNotification(Study study, Account account) {
         Notification notification = new Notification();
         notification.setTitle(study.getTitle());
-        notification.setLink(study.getEncodedPath());
+        notification.setLink("/study/" + study.getEncodedPath());
         notification.setChecked(false);
-        notification.setCreatedLocalDateTime(LocalDateTime.now());
+        notification.setCreatedDateTime(LocalDateTime.now());
         notification.setMessage(study.getShortDescription());
         notification.setAccount(account);
         notification.setNotificationType(NotificationType.STUDY_CREATED);

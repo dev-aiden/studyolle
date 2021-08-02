@@ -7,6 +7,7 @@ import com.studyolle.modules.account.Account;
 import com.studyolle.modules.account.AccountPredicates;
 import com.studyolle.modules.account.AccountRepository;
 import com.studyolle.modules.notification.Notification;
+import com.studyolle.modules.notification.NotificationRepository;
 import com.studyolle.modules.notification.NotificationType;
 import com.studyolle.modules.study.Study;
 import com.studyolle.modules.study.StudyRepository;

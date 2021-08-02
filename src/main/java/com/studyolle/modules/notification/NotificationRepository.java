@@ -1,7 +1,10 @@
-package com.studyolle.modules.study.event;
+package com.studyolle.modules.notification;
 
+import com.studyolle.modules.account.Account;
 import com.studyolle.modules.notification.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
+
+    long countByAccountAndChecked(Account account, boolean checked);
 }

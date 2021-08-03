@@ -1,7 +1,6 @@
-package com.studyolle.modules;
+package com.studyolle;
 
 
-import com.studyolle.App;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -17,6 +16,7 @@ public class PackageDependencyTests {
     private static final String ACCOUNT = "..modules.account..";
     private static final String TAG = "..modules.tag..";
     private static final String ZONE = "..modules.zone..";
+    private static final String MAIN = "..modules.main..";
 
     @ArchTest
     ArchRule modulesPackageRule = classes().that().resideInAPackage("com.studyolle.modules..")
@@ -24,8 +24,9 @@ public class PackageDependencyTests {
             .resideInAnyPackage("com.studyolle.modules..");
 
     @ArchTest
-    ArchRule studyPackageRule = classes().that().resideInAnyPackage(STUDY)
-            .should().onlyBeAccessed().byClassesThat().resideInAnyPackage(STUDY, EVENT);
+    ArchRule studyPackageRule = classes().that().resideInAPackage(STUDY)
+            .should().onlyBeAccessed().byClassesThat()
+            .resideInAnyPackage(STUDY, EVENT, MAIN);
 
     @ArchTest
     ArchRule eventPackageRule = classes().that().resideInAPackage(EVENT)
